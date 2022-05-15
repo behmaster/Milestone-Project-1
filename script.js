@@ -1,64 +1,216 @@
-function move(element) {
-  element.style.position = "fixed";
-
-  function moveToCoordinates(left, bottom) {
-    element.style.left = left + "px";
-    element.style.bottom = bottom + "px";
-  }
-
-  function moveWithArrowKeys(left, bottom, callback) {
-    let direction = null;
-    let x = left;
-    let y = bottom;
-
-    element.style.left = x + "px";
-    element.style.bottom = y + "px";
-
-    function moveCharacter() {
-      if (direction === "west") {
-        x -= 1;
-      }
-      if (direction === "north") {
-        y += 1;
-      }
-      if (direction === "east") {
-        x += 1;
-      }
-      if (direction === "south") {
-        y -= 1;
-      }
-      element.style.left = x + "px";
-      element.style.bottom = y + "px";
-    }
-
-    setInterval(moveCharacter, 1);
-
-    document.addEventListener("keydown", function (e) {
-      if (e.repeat) return;
-
-      if (e.key === "ArrowLeft") {
-        direction = "west";
-      }
-      if (e.key === "ArrowUp") {
-        direction = "north";
-      }
-      if (e.key === "ArrowRight") {
-        direction = "east";
-      }
-      if (e.key === "ArrowDown") {
-        direction = "south";
-      }
-      callback(direction);
-    });
-
-    document.addEventListener("keyup", function (e) {
-      direction = null;
-      callback(direction);
-    });
-  }
-
-  return {
-    to: moveToCoordinates,
-    withArrowKeys: moveWithArrowKeys,
-  };
+function newImage(url) {
+  let image = document.createElement("img");
+  image.src = url;
+  image.style.position = "absolute";
+  document.body.append(image);
+  return image;
 }
+
+// import platform from "/assets/ground1.png";
+// import platform from "/assets/grass2.png";
+// import platform from "/assets/hills3.png";
+// import platform from "/assets/hills4.png";
+// import platform from "/assets/sky5.png";
+
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+//canvas.height = window.innerHeight;
+// canvas.width = 1060;
+canvas.height = 600;
+
+const gravity = 1.5;
+
+class Player {
+  constructor() {
+    this.position = {
+      x: window.innerWidth * 0.5,
+      y: 400,
+    };
+    this.velocity = {
+      x: 0,
+      y: 0,
+    };
+    this.width = 30;
+    this.height = 30;
+  }
+  draw() {
+    ctx.fillStyle = "red";
+    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+  }
+  update() {
+    this.draw();
+    this.position.y += this.velocity.y;
+    this.position.x += this.velocity.x;
+
+    if (this.position.y + this.height + this.velocity.y <= canvas.height) {
+      this.velocity.y += gravity;
+    } else {
+      this.velocity.y = 0;
+    }
+  }
+}
+class Platform {
+  constructor({ x, y }) {
+    this.position = {
+      x: x,
+      y: y,
+    };
+    this.width = 200;
+    this.height = 20;
+  }
+
+  draw() {
+    ctx.fillStyle = "brown";
+    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+  }
+}
+
+const player = new Player();
+//const platform = new Platform();
+const platforms = [
+  new Platform({ x: 100, y: 200 }),
+  new Platform({ x: 300, y: 400 }),
+];
+const keys = {
+  right: {
+    pressed: false,
+  },
+  left: {
+    pressed: false,
+  },
+};
+
+let scrollOffset = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  player.update();
+  platforms.forEach((platform) => {
+    platform.draw();
+  });
+
+  if (
+    keys.right.pressed == true &&
+    player.position.x < window.innerWidth * (2 / 3)
+  ) {
+    player.velocity.x = 5;
+  } else if (
+    keys.left.pressed == true &&
+    player.position.x >= window.innerWidth * (1 / 3)
+  ) {
+    player.velocity.x = -5;
+  } else {
+    player.velocity.x = 0;
+
+    if (keys.right.pressed) {
+      scrollOffset += 5;
+      platforms.forEach((platform) => {
+        platform.position.x -= 5;
+      });
+    } else if (keys.left.pressed) {
+      scrollOffset -= 5;
+      platforms.forEach((platform) => {
+        platform.position.x += 5;
+      });
+    }
+  }
+  //this is the platform collision detection code
+  platforms.forEach((platform) => {
+    if (
+      player.position.y + player.height <= platform.position.y &&
+      player.position.y + player.height + player.velocity.y >=
+        platform.position.y &&
+      player.position.x + player.width >= platform.position.x &&
+      player.position.x <= platform.position.x + platform.width
+    ) {
+      player.velocity.y = 0;
+    }
+  });
+  if (scrollOffset > 2000) {
+    console.log("You Win!");
+  }
+}
+animate();
+
+document.addEventListener("keydown", ({ keyCode }) => {
+  console.log(event);
+  switch (keyCode) {
+    case 65:
+      console.log("left");
+      keys.left.pressed = true;
+      break;
+    case 37:
+      console.log("left");
+      keys.left.pressed = true;
+      break;
+
+    case 83:
+      console.log("down");
+      break;
+    case 40:
+      console.log("down");
+      break;
+
+    case 68:
+      console.log("right");
+      keys.right.pressed = true;
+      break;
+    case 39:
+      console.log("right");
+      keys.right.pressed = true;
+      break;
+
+    case 87:
+      console.log("up");
+      player.velocity.y -= 30;
+      break;
+    case 38:
+      console.log("up");
+      player.velocity.y -= 30;
+      break;
+  }
+});
+
+document.addEventListener("keyup", ({ keyCode }) => {
+  //   console.log(event);
+  switch (keyCode) {
+    case 65:
+      console.log("left");
+      keys.left.pressed = false;
+      break;
+    case 37:
+      console.log("left");
+      keys.left.pressed = false;
+      break;
+
+    case 83:
+      console.log("down");
+      player.velocity.y = 0;
+      break;
+    case 40:
+      console.log("down");
+      player.velocity.y = 0;
+      break;
+
+    case 68:
+      console.log("right");
+      keys.right.pressed = false;
+      break;
+    case 39:
+      console.log("right");
+      keys.right.pressed = false;
+      break;
+
+    case 87:
+      console.log("up");
+      player.velocity.y = 0;
+      break;
+    case 38:
+      console.log("up");
+      player.velocity.y = 0;
+      break;
+  }
+});
