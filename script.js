@@ -1,16 +1,35 @@
-function newImage(url) {
-  let image = document.createElement("img");
-  image.src = url;
-  image.style.position = "absolute";
-  document.body.append(image);
-  return image;
-}
+// function newImage(url) {
+//   let image = document.createElement("img");
+//   image.src = url;
+//   image.style.position = "absolute";
+//   document.body.append(image);
+//   return image;
+// }
+// function newInventory() {
+//   let inventory = document.createElement("div");
+//   inventory.style.width = "100%";
+//   inventory.style.height = "100px";
+//   inventory.style.display = "flex";
+//   inventory.style.flexDirection = "row";
+//   inventory.style.alignItems = "center";
+//   inventory.style.justifyContent = "space-evenly";
+//   inventory.style.border = "2px solid black";
+//   inventory.style.backgroundColor = "brown";
+//   document.body.append(inventory);
+//   return inventory;
+// }
+// function move(element) {
+//   element.style.position = "fixed";
+//   const inventory = newInventory();
+//   move(inventory).to(0, 0);
+// }
+// move(newImage("assets/ground1.png")).to(200, 450);
 
 // import platform from "/assets/ground1.png";
-// import platform from "/assets/grass2.png";
-// import platform from "/assets/hills3.png";
-// import platform from "/assets/hills4.png";
-// import platform from "/assets/sky5.png";
+// import grass from "/assets/grass2.png";
+// import hills3 from "/assets/hills3.png";
+// import hills4 from "/assets/hills4.png";
+// import sky from "/assets/sky5.png";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
