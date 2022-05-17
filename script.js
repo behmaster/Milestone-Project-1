@@ -1,10 +1,10 @@
-// function newImage(url) {
-//   let image = document.createElement("img");
-//   image.src = url;
-//   image.style.position = "absolute";
-//   document.body.append(image);
-//   return image;
-// }
+function Image(url) {
+  let image = document.createElement("img");
+  image.src = url;
+  image.style.position = "absolute";
+  document.body.append(image);
+  return image;
+}
 // function newInventory() {
 //   let inventory = document.createElement("div");
 //   inventory.style.width = "100%";
@@ -30,6 +30,20 @@
 // import hills3 from "/assets/hills3.png";
 // import hills4 from "/assets/hills4.png";
 // import sky from "/assets/sky5.png";
+
+const dirt = new Image();
+dirt.src = "/assets/ground1.png";
+dirt.width = 400;
+dirt.height = 40;
+// const grass = new Image();
+// grass.src = "/assets/grass2.png";
+// const hills3 = new Image();
+// hills3.src = "/assets/hills3.png";
+// const hills4 = new Image();
+// hills4.src = "/assets/hills4.png";
+// const sky = new Image();
+// sky.src = "/assets/sky5.png";
+// console.log(dirt);
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -76,8 +90,9 @@ class Platform {
       x: x,
       y: y,
     };
-    this.width = 200;
-    this.height = 20;
+    this.image = dirt;
+    this.width = dirt.width;
+    this.height = dirt.height;
   }
 
   draw() {
@@ -89,8 +104,8 @@ class Platform {
 const player = new Player();
 //const platform = new Platform();
 const platforms = [
-  new Platform({ x: 100, y: 200 }),
-  new Platform({ x: 300, y: 400 }),
+  new Platform({ x: 100, y: 200, image: dirt }),
+  new Platform({ x: 300, y: 400, image: `dirt` }),
 ];
 const keys = {
   right: {
