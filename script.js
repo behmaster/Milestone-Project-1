@@ -1,55 +1,60 @@
-function Image(url) {
+function newImage(url, width, height) {
   let image = document.createElement("img");
   image.src = url;
+  image.width = width;
+  image.height = height;
   image.style.position = "absolute";
   document.body.append(image);
   return image;
 }
-// function newInventory() {
-//   let inventory = document.createElement("div");
-//   inventory.style.width = "100%";
-//   inventory.style.height = "100px";
-//   inventory.style.display = "flex";
-//   inventory.style.flexDirection = "row";
-//   inventory.style.alignItems = "center";
-//   inventory.style.justifyContent = "space-evenly";
-//   inventory.style.border = "2px solid black";
-//   inventory.style.backgroundColor = "brown";
-//   document.body.append(inventory);
-//   return inventory;
-// }
-// function move(element) {
-//   element.style.position = "fixed";
-//   const inventory = newInventory();
-//   move(inventory).to(0, 0);
-// }
-// move(newImage("assets/ground1.png")).to(200, 450);
 
-// import platform from "/assets/ground1.png";
-// import grass from "/assets/grass2.png";
-// import hills3 from "/assets/hills3.png";
-// import hills4 from "/assets/hills4.png";
-// import sky from "/assets/sky5.png";
+const dirt1 = newImage("./assets/dirt1.png", 0, 0);
+const dirt2 = newImage("./assets/dirt2.png", 0, 0);
+const dirt3 = newImage("./assets/dirt3.png", 0, 0);
+const grass1 = newImage("./assets/grass1.png", 0, 0);
+const grass2 = newImage("./assets/grass2.png", 0, 0);
+const grass3 = newImage("./assets/grass3.png", 0, 0);
+const hills11 = newImage("./assets/hills1-1.png", 0, 0);
+const hills12 = newImage("./assets/hills1-2.png", 0, 0);
+const hills13 = newImage("./assets/hills1-3.png", 0, 0);
+const hills21 = newImage("./assets/hills2-1.png", 0, 0);
+const hills22 = newImage("./assets/hills2-2.png", 0, 0);
+const hills23 = newImage("./assets/hills2-3.png", 0, 0);
+const hills31 = newImage("./assets/hills3-1.png", 0, 0);
+const hills32 = newImage("./assets/hills3-2.png", 0, 0);
+const hills33 = newImage("./assets/hills3-3.png", 0, 0);
+const sky1 = newImage("./assets/sky1.png", 0, 0);
+const sky2 = newImage("./assets/sky2.png", 0, 0);
+const sky3 = newImage("./assets/sky3.png", 0, 0);
 
-const dirt = new Image();
-dirt.src = "/assets/ground1.png";
-dirt.width = 400;
-dirt.height = 40;
-// const grass = new Image();
-// grass.src = "/assets/grass2.png";
-// const hills3 = new Image();
-// hills3.src = "/assets/hills3.png";
-// const hills4 = new Image();
-// hills4.src = "/assets/hills4.png";
-// const sky = new Image();
-// sky.src = "/assets/sky5.png";
-// console.log(dirt);
+// const dirt1Src = "./assets/dirt1.png";
+// const dirt1 = new newImage(dirt1Src);
+// dirt1.width = 0;
+// dirt1.height = 0;
+
+// const grass1Src = "/assets/grass1.png";
+// const grass1 = new newImage(grass1Src);
+// grass1.width = 0;
+// grass1.height = 0;
+
+// const hill1Src = "/assets/hills1-1.png";
+// const hill1 = new newImage(hill1Src);
+// hill1.width = 0;
+// hill1.height = 0;
+
+// // const hills4 = new newImage();
+// // hills4.src = "/assets/hills4.png";
+// const sky1Src = "/assets/sky1.png";
+// const sky1 = new newImage(sky1Src);
+// sky1.width = 0;
+// sky1.height = 0;
+// // console.log(dirt);
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
-//canvas.height = window.innerHeight;
+// canvas.height = window.innerHeight;
 // canvas.width = 1060;
 canvas.height = 600;
 
@@ -85,28 +90,87 @@ class Player {
   }
 }
 class Platform {
-  constructor({ x, y }) {
+  constructor({ image, x, y, width, height }) {
     this.position = {
       x: x,
       y: y,
     };
-    this.image = dirt;
-    this.width = dirt.width;
-    this.height = dirt.height;
+    this.image = image;
+    this.width = width;
+    this.height = height;
   }
 
   draw() {
-    ctx.fillStyle = "brown";
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    // ctx.fillStyle = "brown";
+    // ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
+  }
+}
+class Background {
+  constructor({ image, x, y, width, height, scrollSpeed }) {
+    this.position = {
+      x: x,
+      y: y,
+    };
+    this.image = image;
+    this.width = width;
+    this.height = height;
+  }
+
+  draw() {
+    // ctx.fillStyle = "brown";
+    // ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
 }
 
 const player = new Player();
 //const platform = new Platform();
 const platforms = [
-  new Platform({ x: 100, y: 200, image: dirt }),
-  new Platform({ x: 300, y: 400, image: `dirt` }),
+  new Platform({ image: dirt1, x: 0, y: 520, width: 800, height: 80 }),
+  new Platform({ image: dirt2, x: 799, y: 520, width: 800, height: 80 }),
+  new Platform({ image: dirt3, x: 1598, y: 520, width: 800, height: 80 }),
 ];
+
+const skyBackground = [
+  new Background({ image: sky2, x: 0, y: 0, width: 1200, height: 600 }),
+  new Background({ image: sky3, x: 1198, y: 0, width: 1200, height: 600 }),
+];
+const hill3Background = [
+  new Background({ image: hills31, x: 0, y: 180, width: 1200, height: 400 }),
+  new Background({ image: hills32, x: 1199, y: 180, width: 1200, height: 400 }),
+  new Background({ image: hills33, x: 2398, y: 180, width: 1200, height: 400 }),
+];
+const hill2Background = [
+  new Background({ image: hills21, x: 0, y: 220, width: 1200, height: 400 }),
+  new Background({ image: hills22, x: 1199, y: 220, width: 1200, height: 400 }),
+  new Background({ image: hills23, x: 2398, y: 205, width: 1200, height: 400 }),
+];
+const hill1Background = [
+  new Background({ image: hills11, x: 0, y: 240, width: 1200, height: 400 }),
+  new Background({ image: hills12, x: 1199, y: 276, width: 1200, height: 400 }),
+  new Background({ image: hills13, x: 2398, y: 286, width: 1200, height: 400 }),
+];
+const grassBackground = [
+  new Background({ image: grass1, x: 0, y: 200, width: 900, height: 400 }),
+  new Background({ image: grass2, x: 898, y: 466, width: 900, height: 150 }),
+  new Background({ image: grass3, x: 1797, y: 307, width: 900, height: 300 }),
+  new Background({ image: grass2, x: 2697, y: 462, width: 900, height: 200 }),
+  new Background({ image: grass1, x: 3596, y: 230, width: 900, height: 400 }),
+];
+
 const keys = {
   right: {
     pressed: false,
@@ -120,12 +184,28 @@ let scrollOffset = 0;
 
 function animate() {
   requestAnimationFrame(animate);
+  ctx.fillStyle = "white";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  player.update();
+  skyBackground.forEach((sky) => {
+    sky.draw();
+  });
+  hill3Background.forEach((hill) => {
+    hill.draw();
+  });
+  hill2Background.forEach((hill) => {
+    hill.draw();
+  });
+  hill1Background.forEach((hill) => {
+    hill.draw();
+  });
+  grassBackground.forEach((grass) => {
+    grass.draw();
+  });
   platforms.forEach((platform) => {
     platform.draw();
   });
-
+  //   console.log(player.position.x + scrollOffset);
+  player.update();
   if (
     keys.right.pressed == true &&
     player.position.x < window.innerWidth * (2 / 3)
@@ -141,11 +221,41 @@ function animate() {
 
     if (keys.right.pressed) {
       scrollOffset += 5;
+      skyBackground.forEach((sky) => {
+        sky.position.x -= 1;
+      });
+      hill3Background.forEach((hill) => {
+        hill.position.x -= 2;
+      });
+      hill2Background.forEach((hill) => {
+        hill.position.x -= 2.5;
+      });
+      hill1Background.forEach((hill) => {
+        hill.position.x -= 3;
+      });
+      grassBackground.forEach((grass) => {
+        grass.position.x -= 4.3;
+      });
       platforms.forEach((platform) => {
         platform.position.x -= 5;
       });
     } else if (keys.left.pressed) {
       scrollOffset -= 5;
+      skyBackground.forEach((sky) => {
+        sky.position.x += 1;
+      });
+      hill3Background.forEach((hill) => {
+        hill.position.x += 2;
+      });
+      hill2Background.forEach((hill) => {
+        hill.position.x += 2.5;
+      });
+      hill1Background.forEach((hill) => {
+        hill.position.x += 3;
+      });
+      grassBackground.forEach((grass) => {
+        grass.position.x += 4.3;
+      });
       platforms.forEach((platform) => {
         platform.position.x += 5;
       });
@@ -163,10 +273,11 @@ function animate() {
       player.velocity.y = 0;
     }
   });
-  if (scrollOffset > 2000) {
+  if (scrollOffset > 5000) {
     console.log("You Win!");
   }
 }
+
 animate();
 
 document.addEventListener("keydown", ({ keyCode }) => {
