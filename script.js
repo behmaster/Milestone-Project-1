@@ -27,28 +27,10 @@ const sky1 = newImage("./assets/sky1.png", 0, 0);
 const sky2 = newImage("./assets/sky2.png", 0, 0);
 const sky3 = newImage("./assets/sky3.png", 0, 0);
 
-// const dirt1Src = "./assets/dirt1.png";
-// const dirt1 = new newImage(dirt1Src);
-// dirt1.width = 0;
-// dirt1.height = 0;
-
-// const grass1Src = "/assets/grass1.png";
-// const grass1 = new newImage(grass1Src);
-// grass1.width = 0;
-// grass1.height = 0;
-
-// const hill1Src = "/assets/hills1-1.png";
-// const hill1 = new newImage(hill1Src);
-// hill1.width = 0;
-// hill1.height = 0;
-
-// // const hills4 = new newImage();
-// // hills4.src = "/assets/hills4.png";
-// const sky1Src = "/assets/sky1.png";
-// const sky1 = new newImage(sky1Src);
-// sky1.width = 0;
-// sky1.height = 0;
-// // console.log(dirt);
+const idleRight = newImage("./assets/IdleRight.png", 0, 0);
+const idleLeft = newImage("./assets/IdleLeft.png", 0, 0);
+const runRight = newImage("./assets/RunRight.png", 0, 0);
+const runLeft = newImage("./assets/RunLeft.png", 0, 0);
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -62,31 +44,73 @@ const gravity = 1.5;
 
 class Player {
   constructor() {
+    this.speed = 6;
     this.position = {
-      x: window.innerWidth * 0.5,
-      y: 400,
+      x: window.innerWidth * 0.25,
+      y: 0,
     };
     this.velocity = {
       x: 0,
       y: 0,
     };
-    this.width = 30;
-    this.height = 30;
+    this.width = 120;
+    this.height = 120;
+    this.image = idleRight;
+    this.frames = 0;
+    this.sprites = {
+      idle: {
+        right: idleRight,
+        left: idleLeft,
+        cropWidth: 510,
+      },
+      run: {
+        right: runRight,
+        left: runLeft,
+      },
+    };
+    this.currentSprite = this.sprites.idle.right;
+    this.currentCropWidth = 510;
   }
+
   draw() {
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    ctx.drawImage(
+      this.currentSprite,
+      this.currentCropWidth * this.frames,
+      0,
+      340,
+      400,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
   update() {
+    this.frames++;
+    //console.log(this.frames);
+    if (
+      this.frames >= 16 &&
+      (this.currentSprite === this.sprites.idle.right ||
+        this.currentSprite === this.sprites.idle.left)
+    )
+      this.frames = 0;
+    else if (
+      this.frames >= 13 &&
+      (this.currentSprite === this.sprites.run.right ||
+        this.currentSprite === this.sprites.run.left)
+    )
+      this.frames = 0;
     this.draw();
     this.position.y += this.velocity.y;
     this.position.x += this.velocity.x;
 
-    if (this.position.y + this.height + this.velocity.y <= canvas.height) {
+    if (
+      this.position.y + this.height + this.velocity.y <=
+      canvas.height + player.height
+    ) {
       this.velocity.y += gravity;
-    } else {
-      this.velocity.y = 0;
     }
+    // else {this.velocity.y = 0;  }
   }
 }
 class Platform {
@@ -136,41 +160,173 @@ class Background {
   }
 }
 
-const player = new Player();
-//const platform = new Platform();
-const platforms = [
-  new Platform({ image: dirt1, x: 0, y: 520, width: 800, height: 80 }),
-  new Platform({ image: dirt2, x: 799, y: 520, width: 800, height: 80 }),
-  new Platform({ image: dirt3, x: 1598, y: 520, width: 800, height: 80 }),
-];
+let player = new Player();
+// console.log(player.sprites.run.right);
+let platforms = [];
 
-const skyBackground = [
-  new Background({ image: sky2, x: 0, y: 0, width: 1200, height: 600 }),
-  new Background({ image: sky3, x: 1198, y: 0, width: 1200, height: 600 }),
-];
-const hill3Background = [
-  new Background({ image: hills31, x: 0, y: 180, width: 1200, height: 400 }),
-  new Background({ image: hills32, x: 1199, y: 180, width: 1200, height: 400 }),
-  new Background({ image: hills33, x: 2398, y: 180, width: 1200, height: 400 }),
-];
-const hill2Background = [
-  new Background({ image: hills21, x: 0, y: 220, width: 1200, height: 400 }),
-  new Background({ image: hills22, x: 1199, y: 220, width: 1200, height: 400 }),
-  new Background({ image: hills23, x: 2398, y: 205, width: 1200, height: 400 }),
-];
-const hill1Background = [
-  new Background({ image: hills11, x: 0, y: 240, width: 1200, height: 400 }),
-  new Background({ image: hills12, x: 1199, y: 276, width: 1200, height: 400 }),
-  new Background({ image: hills13, x: 2398, y: 286, width: 1200, height: 400 }),
-];
-const grassBackground = [
-  new Background({ image: grass1, x: 0, y: 200, width: 900, height: 400 }),
-  new Background({ image: grass2, x: 898, y: 466, width: 900, height: 150 }),
-  new Background({ image: grass3, x: 1797, y: 307, width: 900, height: 300 }),
-  new Background({ image: grass2, x: 2697, y: 462, width: 900, height: 200 }),
-  new Background({ image: grass1, x: 3596, y: 230, width: 900, height: 400 }),
-];
+let skyBackground = [];
+let hill3Background = [];
+let hill2Background = [];
+let hill1Background = [];
+let grassBackground = [];
+let scrollOffset = 0;
 
+function start() {
+  player = new Player();
+
+  platforms = [
+    new Platform({ image: dirt1, x: 0, y: 520, width: 800, height: 80 }),
+    new Platform({ image: dirt2, x: 799, y: 520, width: 800, height: 80 }),
+    new Platform({ image: dirt3, x: 1950, y: 520, width: 800, height: 80 }),
+    new Platform({ image: dirt3, x: 1670, y: 400, width: 200, height: 20 }),
+    new Platform({ image: dirt3, x: 2670, y: 400, width: 200, height: 20 }),
+    new Platform({ image: dirt3, x: 2870, y: 270, width: 200, height: 20 }),
+    new Platform({ image: dirt3, x: 3200, y: 270, width: 40, height: 20 }),
+    new Platform({ image: dirt3, x: 3400, y: 270, width: 40, height: 20 }),
+    new Platform({ image: dirt3, x: 3500, y: 400, width: 100, height: 20 }),
+    new Platform({ image: dirt3, x: 3600, y: 520, width: 800, height: 80 }),
+    new Platform({ image: dirt3, x: 4400 - 2, y: 520, width: 800, height: 80 }),
+    new Platform({ image: dirt3, x: 5400, y: 520, width: 40, height: 20 }),
+    new Platform({ image: dirt3, x: 5400, y: 400, width: 40, height: 20 }),
+    new Platform({ image: dirt3, x: 5550, y: 270, width: 400, height: 20 }),
+    new Platform({ image: dirt3, x: 6100, y: 150, width: 400, height: 20 }),
+    new Platform({ image: dirt3, x: 6700, y: 520, width: 800, height: 80 }),
+    new Platform({ image: dirt3, x: 7500 - 2, y: 520, width: 800, height: 80 }),
+  ];
+
+  skyBackground = [
+    new Background({ image: sky1, x: 0, y: 0, width: 1200, height: 600 }),
+    new Background({ image: sky2, x: 1198, y: 0, width: 1200, height: 600 }),
+    new Background({ image: sky3, x: 2396, y: 0, width: 1200, height: 600 }),
+  ];
+  hill3Background = [
+    new Background({ image: hills31, x: 0, y: 180, width: 1200, height: 400 }),
+    new Background({
+      image: hills32,
+      x: 1199,
+      y: 180,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills33,
+      x: 2398,
+      y: 180,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills31,
+      x: 3597,
+      y: 180,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills32,
+      x: 4796,
+      y: 180,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills33,
+      x: 5995,
+      y: 180,
+      width: 1200,
+      height: 400,
+    }),
+  ];
+  hill2Background = [
+    new Background({ image: hills21, x: 0, y: 220, width: 1200, height: 400 }),
+    new Background({
+      image: hills22,
+      x: 1199,
+      y: 220,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills23,
+      x: 2398,
+      y: 205,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills21,
+      x: 3597,
+      y: 220,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills22,
+      x: 4796,
+      y: 220,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills23,
+      x: 5995,
+      y: 205,
+      width: 1200,
+      height: 400,
+    }),
+  ];
+  hill1Background = [
+    new Background({ image: hills11, x: 0, y: 240, width: 1200, height: 400 }),
+    new Background({
+      image: hills12,
+      x: 1199,
+      y: 276,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills13,
+      x: 2398,
+      y: 286,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills11,
+      x: 3597,
+      y: 240,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills12,
+      x: 4797,
+      y: 276,
+      width: 1200,
+      height: 400,
+    }),
+    new Background({
+      image: hills13,
+      x: 5996,
+      y: 286,
+      width: 1200,
+      height: 400,
+    }),
+  ];
+  grassBackground = [
+    new Background({ image: grass1, x: 0, y: 200, width: 900, height: 400 }),
+    new Background({ image: grass2, x: 898, y: 466, width: 900, height: 150 }),
+    new Background({ image: grass3, x: 1797, y: 307, width: 900, height: 300 }),
+    new Background({ image: grass1, x: 2696, y: 200, width: 900, height: 400 }),
+    new Background({ image: grass2, x: 3595, y: 466, width: 900, height: 150 }),
+    new Background({ image: grass3, x: 4494, y: 307, width: 900, height: 300 }),
+    new Background({ image: grass1, x: 5393, y: 200, width: 900, height: 400 }),
+    new Background({ image: grass2, x: 6292, y: 466, width: 900, height: 150 }),
+    new Background({ image: grass3, x: 7190, y: 307, width: 900, height: 300 }),
+  ];
+  scrollOffset = 0;
+}
+let lastKey;
 const keys = {
   right: {
     pressed: false,
@@ -179,8 +335,6 @@ const keys = {
     pressed: false,
   },
 };
-
-let scrollOffset = 0;
 
 function animate() {
   requestAnimationFrame(animate);
@@ -210,54 +364,55 @@ function animate() {
     keys.right.pressed == true &&
     player.position.x < window.innerWidth * (2 / 3)
   ) {
-    player.velocity.x = 5;
+    player.velocity.x = player.speed;
   } else if (
-    keys.left.pressed == true &&
-    player.position.x >= window.innerWidth * (1 / 3)
+    (keys.left.pressed == true &&
+      player.position.x >= window.innerWidth * (1 / 3)) ||
+    (keys.left.pressed && scrollOffset === 0 && player.position.x > 0)
   ) {
-    player.velocity.x = -5;
+    player.velocity.x = -player.speed;
   } else {
     player.velocity.x = 0;
 
     if (keys.right.pressed) {
-      scrollOffset += 5;
+      scrollOffset += player.speed;
       skyBackground.forEach((sky) => {
-        sky.position.x -= 1;
+        sky.position.x -= player.speed * 0.2;
       });
       hill3Background.forEach((hill) => {
-        hill.position.x -= 2;
+        hill.position.x -= player.speed * 0.4;
       });
       hill2Background.forEach((hill) => {
-        hill.position.x -= 2.5;
+        hill.position.x -= player.speed * 0.5;
       });
       hill1Background.forEach((hill) => {
-        hill.position.x -= 3;
+        hill.position.x -= player.speed * 0.6;
       });
       grassBackground.forEach((grass) => {
-        grass.position.x -= 4.3;
+        grass.position.x -= player.speed * 0.7;
       });
       platforms.forEach((platform) => {
-        platform.position.x -= 5;
+        platform.position.x -= player.speed;
       });
-    } else if (keys.left.pressed) {
-      scrollOffset -= 5;
+    } else if (keys.left.pressed && scrollOffset > 0) {
+      scrollOffset -= player.speed;
       skyBackground.forEach((sky) => {
-        sky.position.x += 1;
+        sky.position.x += player.speed * 0.2;
       });
       hill3Background.forEach((hill) => {
-        hill.position.x += 2;
+        hill.position.x += player.speed * 0.4;
       });
       hill2Background.forEach((hill) => {
-        hill.position.x += 2.5;
+        hill.position.x += player.speed * 0.5;
       });
       hill1Background.forEach((hill) => {
-        hill.position.x += 3;
+        hill.position.x += player.speed * 0.6;
       });
       grassBackground.forEach((grass) => {
-        grass.position.x += 4.3;
+        grass.position.x += player.speed * 0.7;
       });
       platforms.forEach((platform) => {
-        platform.position.x += 5;
+        platform.position.x += player.speed;
       });
     }
   }
@@ -273,48 +428,87 @@ function animate() {
       player.velocity.y = 0;
     }
   });
-  if (scrollOffset > 5000) {
+
+  if (player.position.y < 0) {
+    player.velocity.y = 10;
+  }
+
+  if (
+    keys.right.pressed &&
+    lastKey === "right" &&
+    player.currentSprite !== player.sprites.run.right
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.run.right;
+  } else if (
+    keys.left.pressed &&
+    lastKey === "left" &&
+    player.currentSprite !== player.sprites.run.left
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.run.left;
+  } else if (
+    !keys.left.pressed &&
+    lastKey === "left" &&
+    player.currentSprite !== player.sprites.idle.left
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.idle.left;
+  } else if (
+    !keys.right.pressed &&
+    lastKey === "right" &&
+    player.currentSprite !== player.sprites.idle.right
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.idle.right;
+  }
+
+  //win condition
+  if (scrollOffset + canvas.width > 8300) {
     console.log("You Win!");
   }
+  //lose condition
+  if (player.position.y > canvas.height) {
+    console.log("you lose");
+    start();
+  }
 }
-
+start();
 animate();
 
 document.addEventListener("keydown", ({ keyCode }) => {
-  console.log(event);
+  //   console.log(event);
   switch (keyCode) {
     case 65:
-      console.log("left");
       keys.left.pressed = true;
+      lastKey = "left";
       break;
     case 37:
-      console.log("left");
       keys.left.pressed = true;
+      lastKey = "left";
       break;
 
     case 83:
-      console.log("down");
+      //   console.log("down");
       break;
     case 40:
-      console.log("down");
+      //   console.log("down");
       break;
 
     case 68:
-      console.log("right");
       keys.right.pressed = true;
+      lastKey = "right";
       break;
     case 39:
-      console.log("right");
       keys.right.pressed = true;
+      lastKey = "right";
       break;
 
     case 87:
-      console.log("up");
-      player.velocity.y -= 30;
+      player.velocity.y -= 20;
       break;
     case 38:
-      console.log("up");
-      player.velocity.y -= 30;
+      player.velocity.y -= 20;
       break;
   }
 });
@@ -323,38 +517,30 @@ document.addEventListener("keyup", ({ keyCode }) => {
   //   console.log(event);
   switch (keyCode) {
     case 65:
-      console.log("left");
       keys.left.pressed = false;
       break;
     case 37:
-      console.log("left");
       keys.left.pressed = false;
       break;
 
     case 83:
-      console.log("down");
       player.velocity.y = 0;
       break;
     case 40:
-      console.log("down");
       player.velocity.y = 0;
       break;
 
     case 68:
-      console.log("right");
       keys.right.pressed = false;
       break;
     case 39:
-      console.log("right");
       keys.right.pressed = false;
       break;
 
     case 87:
-      console.log("up");
       player.velocity.y = 0;
       break;
     case 38:
-      console.log("up");
       player.velocity.y = 0;
       break;
   }
