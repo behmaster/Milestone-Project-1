@@ -38,3 +38,5 @@ moving platforms
 attack function for main character
 and improved win animation
 multiple levels
+music and sound effects
+health
