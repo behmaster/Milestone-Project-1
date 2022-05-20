@@ -169,7 +169,7 @@ let hill3Background = [];
 let hill2Background = [];
 let hill1Background = [];
 let grassBackground = [];
-let youWinGif;
+let youWinPhoto;
 let scrollOffset = 0;
 
 function start() {
@@ -325,7 +325,7 @@ function start() {
     new Background({ image: grass2, x: 6292, y: 466, width: 900, height: 150 }),
     new Background({ image: grass3, x: 7190, y: 307, width: 900, height: 300 }),
   ];
-  youWinGif = new Background({
+  youWinPhoto = new Background({
     image: youWin,
     x: 150,
     y: 50,
@@ -476,7 +476,7 @@ function animate() {
   if (scrollOffset + canvas.width > 8300) {
     console.log("You Win!");
 
-    youWinGif.draw();
+    youWinPhoto.draw();
     // ctx.font = "48px serif"
     // ctx.fillText("You Win!", 8300, 200, 400 )
   }
