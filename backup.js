@@ -1,4 +1,3 @@
-//============================Create Images====================================
 function newImage(url, width, height) {
   let image = document.createElement("img");
   image.src = url;
@@ -8,7 +7,7 @@ function newImage(url, width, height) {
   document.body.append(image);
   return image;
 }
-//Paralax Background Images
+
 const dirt1 = newImage("./assets/dirt1.png", 0, 0);
 const dirt2 = newImage("./assets/dirt2.png", 0, 0);
 const dirt3 = newImage("./assets/dirt3.png", 0, 0);
@@ -28,24 +27,21 @@ const sky1 = newImage("./assets/sky1.png", 0, 0);
 const sky2 = newImage("./assets/sky2.png", 0, 0);
 const sky3 = newImage("./assets/sky3.png", 0, 0);
 
-//Sprite Character Images
 const idleRight = newImage("./assets/IdleRight.png", 0, 0);
 const idleLeft = newImage("./assets/IdleLeft.png", 0, 0);
 const runRight = newImage("./assets/RunRight.png", 0, 0);
 const runLeft = newImage("./assets/RunLeft.png", 0, 0);
 
-//Win Condition Image
 const youWin = newImage("./assets/youwin.jpg", 0, 0);
 
-// Define canvas Parameters
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+
 canvas.width = window.innerWidth;
 canvas.height = 600;
+
 const gravity = 1.5;
 
-//====================Define classes for player, platforms and backgrounds================
-//Define Player
 class Player {
   constructor() {
     this.speed = 6;
@@ -61,11 +57,11 @@ class Player {
     this.height = 120;
     this.image = idleRight;
     this.frames = 0;
-    //code that defines sprite character
     this.sprites = {
       idle: {
         right: idleRight,
         left: idleLeft,
+        cropWidth: 510,
       },
       run: {
         right: runRight,
@@ -73,11 +69,13 @@ class Player {
       },
     };
     this.currentSprite = this.sprites.idle.right;
+    this.currentCropWidth = 510;
   }
+
   draw() {
     ctx.drawImage(
       this.currentSprite,
-      510,
+      this.currentCropWidth * this.frames,
       0,
       340,
       400,
@@ -87,9 +85,9 @@ class Player {
       this.height
     );
   }
-  //
   update() {
     this.frames++;
+    //console.log(this.frames);
     if (
       this.frames >= 16 &&
       (this.currentSprite === this.sprites.idle.right ||
@@ -161,9 +159,11 @@ class Background {
     );
   }
 }
-//initially define all game elements
+
 let player = new Player();
+// console.log(player.sprites.run.right);
 let platforms = [];
+
 let skyBackground = [];
 let hill3Background = [];
 let hill2Background = [];
@@ -172,10 +172,9 @@ let grassBackground = [];
 let youWinPhoto;
 let scrollOffset = 0;
 
-//using a "start" function so I can re-run the initalize code if the character dies (and goes back to the beginning)
 function start() {
   player = new Player();
-  //Paralax background has 5 components : sky, hill3, hill2, hill1, grass and dirt
+
   platforms = [
     new Platform({ image: dirt1, x: 0, y: 520, width: 800, height: 80 }),
     new Platform({ image: dirt2, x: 799, y: 520, width: 800, height: 80 }),
@@ -335,7 +334,6 @@ function start() {
   });
   scrollOffset = 0;
 }
-//keys function keeps track of what key is being pressed
 let lastKey;
 const keys = {
   right: {
@@ -345,7 +343,7 @@ const keys = {
     pressed: false,
   },
 };
-//animate function
+
 function animate() {
   requestAnimationFrame(animate);
   ctx.fillStyle = "white";
@@ -476,8 +474,7 @@ function animate() {
 
   //win condition
   if (scrollOffset + canvas.width > 8300) {
-    console.log("You Win!");
-
+    //console.log("You Win!");
     youWinPhoto.draw();
     // ctx.font = "48px serif"
     // ctx.fillText("You Win!", 8300, 200, 400 )
