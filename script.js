@@ -32,12 +32,12 @@ const idleLeft = newImage("./assets/IdleLeft.png", 0, 0);
 const runRight = newImage("./assets/RunRight.png", 0, 0);
 const runLeft = newImage("./assets/RunLeft.png", 0, 0);
 
+const youWin = newImage("./assets/youwin.jpg", 0, 0);
+
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
-// canvas.height = window.innerHeight;
-// canvas.width = 1060;
 canvas.height = 600;
 
 const gravity = 1.5;
@@ -169,6 +169,7 @@ let hill3Background = [];
 let hill2Background = [];
 let hill1Background = [];
 let grassBackground = [];
+let youWinGif;
 let scrollOffset = 0;
 
 function start() {
@@ -324,6 +325,13 @@ function start() {
     new Background({ image: grass2, x: 6292, y: 466, width: 900, height: 150 }),
     new Background({ image: grass3, x: 7190, y: 307, width: 900, height: 300 }),
   ];
+  youWinGif = new Background({
+    image: youWin,
+    x: 150,
+    y: 50,
+    width: 852,
+    height: 480,
+  });
   scrollOffset = 0;
 }
 let lastKey;
@@ -358,6 +366,7 @@ function animate() {
   platforms.forEach((platform) => {
     platform.draw();
   });
+
   //   console.log(player.position.x + scrollOffset);
   player.update();
   if (
@@ -466,6 +475,10 @@ function animate() {
   //win condition
   if (scrollOffset + canvas.width > 8300) {
     console.log("You Win!");
+
+    youWinGif.draw();
+    // ctx.font = "48px serif"
+    // ctx.fillText("You Win!", 8300, 200, 400 )
   }
   //lose condition
   if (player.position.y > canvas.height) {
