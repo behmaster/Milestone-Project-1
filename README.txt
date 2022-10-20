@@ -1,6 +1,32 @@
-Milestone Project 1 - Building a Platform scroller game
+# Milestone Project 1 - Building a Platform scroller game
 by Robert Behm
 
+### Description
+This is a platform scroller game where you try to navigate the character across the terrain without falling or dying. 
+Navigation is done using the left and right arrow keys, and jumping is done with the up arrow key. 
+
+### Demo
+There is not a working demo for this game yet.
+
+### Technologies
+This project was created in javascript with HTML Canvas.
+
+### Technical Information
+The current implementation is run using VS Code's "Live Server"
+
+### Issues
+
+At the time of presentation, I still have a few things to build out:
+NPC characters
+Mystery Boxes w/ power ups
+moving platforms
+attack function for main character
+and improved win animation
+multiple levels
+music and sound effects
+health
+
+### Prologue:
 As a kid born in the early ninties, I discovered "Super Mario Land: 6 Golden Coins" 
 on Game Boy and it quickly became my favorite game for a decade. A few decades later, 
 I was very excited to get a chance to learn how to creaste a platform game of my own.
@@ -12,8 +38,7 @@ NPC Charaters - move back and forth, make main character lose health
 Events - die, level up, lose health, kill npc, beat level
 Create Parallax scroll effect
 
-I started the game development and attempted to use a move function code that manipulated the position of the player on the screen.
-I quickly found out that just moving position would not work because the character would not be able to jump and move right or left at the same time. I need to create a velocity component and add gravity to make a playable experience. 
+I started the game development and attempted to use a move function code that manipulated the position of the player on the screen. I quickly found out that just moving position would not work because the character would not be able to jump and move right or left at the same time. I need to create a velocity component and add gravity to make a playable experience. 
 
 I was also exploring how to create the illusion that the character was moving through the level. I found out that a paralax scroll effect in combination with moving the terrain was the way to make this happen. 
 
@@ -31,12 +56,3 @@ The sprite character was also very interesting to learn about because the attach
 
 I really enjoyed this project because it challenged me to learn new things to create my game while deepening my confidence with javascript and thinking like a programmer.
 
-At the time of presentation, I still have a few things to build out:
-NPC characters
-Mystery Boxes w/ power ups
-moving platforms
-attack function for main character
-and improved win animation
-multiple levels
-music and sound effects
-health
